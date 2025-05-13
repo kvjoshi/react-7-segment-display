@@ -32,72 +32,65 @@ type DigitType = {
 };
 
 export const Digit = ({
-    char, // No default needed here, logic below handles invalid/missing char
+    char, // The character to render
     color = "red",
     height = 250,
     skew = false,
-    charMap = defaultCharMap, // Use the default map if none is provided via props
+    charMap = defaultCharMap, // Use the default map if none is provided
 }: DigitType) => {
     const style = {
         height: `${height}px`,
         width: `${height * 0.6}px`,
         zIndex: "1",
-        padding: skew ? "8px 0px" : "0", // Keep original style calculation
+        padding: skew ? "8px 0px" : "0",
         boxSizing: "border-box",
     } as React.CSSProperties;
 
+    // Declare variables
     let segmentsToRender: number[];
+    const currentMap = charMap || defaultCharMap;
 
-// 1. Determine the map to use (prop or default)
-const currentMap = charMap || defaultCharMap;
+    // Try to get segments for the actual character
+    const charSegments =
+        typeof char === "string" && char in currentMap
+            ? currentMap[char]
+            : undefined;
 
-// 2. Try to get segments for the actual character prop `char`
-// Ensure `char` is a string and exists as a key in the map.
-const charSegments =
-    typeof char === "string" && char in currentMap
-        ? currentMap[char]
-        : undefined; // Explicitly undefined if lookup fails
-
-// 3. Validate the result or use the default fallback character's segments
-if (isValidSegmentArray(charSegments)) {
-    // Use segments if they are valid
-    segmentsToRender = charSegments;
-} else if (char === "0" && isValidSegmentArray(currentMap["0"])) {
-    // Special case: ensure "0" is rendered correctly
-    segmentsToRender = currentMap["0"];
-} else {
-    // Fallback: Try to get segments for the DEFAULT_CHAR ('-')
-    const fallbackSegments = currentMap[DEFAULT_CHAR];
-    if (isValidSegmentArray(fallbackSegments)) {
-        segmentsToRender = fallbackSegments;
+    // Validate segments or use fallback
+    if (isValidSegmentArray(charSegments)) {
+        segmentsToRender = charSegments;
     } else {
-        // Ultimate Fallback: If even DEFAULT_CHAR segments are invalid
-        console.error(
-            `react-7-segment-display: Invalid segment data for char "${char}" AND default char "${DEFAULT_CHAR}". Check charMap.`,
-        );
-        segmentsToRender = []; // Assign empty array to prevent .map error
+        const fallbackSegments = currentMap[DEFAULT_CHAR];
+        if (isValidSegmentArray(fallbackSegments)) {
+            segmentsToRender = fallbackSegments;
+            if (char !== DEFAULT_CHAR) {
+                console.warn(
+                    `react-7-segment-display: Character "${char}" not found in charMap. Displaying default "${DEFAULT_CHAR}".`
+                );
+            }
+        } else {
+            console.error(
+                `react-7-segment-display: Invalid segment data for char "${char}" AND default char "${DEFAULT_CHAR}". Check charMap.`
+            );
+            segmentsToRender = []; // Ultimate fallback
+        }
     }
-}
-    // --- End segment calculation ---
-
-    // Now, `segmentsToRender` is guaranteed to be an array (possibly empty in case of error)
 
     return (
         <div className="digit" style={style}>
             {segmentsToRender.map((active, index) => {
-                // Safety check: Ensure index is valid for the 'letters' array
                 if (index >= letters.length) {
                     console.warn(
-                        `react-7-segment-display: Segment index ${index} out of bounds for letter mapping.`,
+                        `react-7-segment-display: Segment index ${index} out of bounds for letter mapping.`
                     );
-                    return null; // Don't render segment if index is bad
+                    return null;
                 }
                 const letter = letters[index];
                 return (
                     <Segment
                         key={letter}
                         active={active === 1}
-                        size={height / 12.5} // Keep original size calculation
+                        size={height / 12.5}
                         color={color}
                         id={letter}
                         skew={skew}
