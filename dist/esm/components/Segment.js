@@ -22,7 +22,7 @@ const Segment = ({ active, color, size, id, skew }) => {
         backgroundColor: color,
         filter: active
             ? "opacity(1) grayscale(0)"
-            : "opacity(0.3) grayscale(0.7)",
+            : "opacity(0.1) grayscale(0.1)",
         color: color,
         clipPath: ss.clipPath,
         WebkitClipPath: ss.clipPath,
