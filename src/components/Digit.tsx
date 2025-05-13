@@ -9,7 +9,20 @@ const DEFAULT_CHAR = "0"; // Character to use if the provided char is invalid
 const isValidSegmentArray = (arr: any): arr is number[] => {
     return Array.isArray(arr) && arr.every((item) => typeof item === "number");
 };
-
+const fallbackSegments = currentMap[DEFAULT_CHAR];
+if (isValidSegmentArray(fallbackSegments)) {
+    segmentsToRender = fallbackSegments;
+    if (char !== DEFAULT_CHAR) {
+        console.warn(
+            `react-7-segment-display: Character "${char}" not found in charMap. Displaying default "${DEFAULT_CHAR}".`
+        );
+    }
+} else {
+    console.error(
+        `react-7-segment-display: Invalid segment data for char "${char}" AND default char "${DEFAULT_CHAR}". Check charMap.`
+    );
+    segmentsToRender = []; // Assign empty array to prevent .map error
+}
 type DigitType = {
     char: string; // The character prop received from Display
     color: string;
