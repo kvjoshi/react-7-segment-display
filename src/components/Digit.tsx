@@ -3,7 +3,7 @@ import React from "react"; // Removed useEffect, useState
 import defaultCharMap, { CharToDigit } from "../utils/charToDigit"; // Use default map for fallback internally
 
 const letters = ["A", "B", "C", "D", "E", "F", "G"] as const;
-const DEFAULT_CHAR = "-"; // Character to use if the provided char is invalid
+const DEFAULT_CHAR = "0"; // Character to use if the provided char is invalid
 
 // Helper function to check if a value is a valid segment array [0, 1, ...]
 const isValidSegmentArray = (arr: any): arr is number[] => {
