@@ -46,41 +46,38 @@ export const Digit = ({
         boxSizing: "border-box",
     } as React.CSSProperties;
 
-    // --- Calculate segments to render directly based on current props ---
     let segmentsToRender: number[];
 
-    // 1. Determine the map to use (prop or default)
-    const currentMap = charMap || defaultCharMap;
+// 1. Determine the map to use (prop or default)
+const currentMap = charMap || defaultCharMap;
 
-    // 2. Try to get segments for the actual character prop `char`
-    //    Ensure `char` is a string and exists as a key in the map.
-    const charSegments =
-        typeof char === "string" && char in currentMap
-            ? currentMap[char]
-            : undefined; // Explicitly undefined if lookup fails
+// 2. Try to get segments for the actual character prop `char`
+// Ensure `char` is a string and exists as a key in the map.
+const charSegments =
+    typeof char === "string" && char in currentMap
+        ? currentMap[char]
+        : undefined; // Explicitly undefined if lookup fails
 
-    // 3. Validate the result or use the default fallback character's segments
-    if (isValidSegmentArray(charSegments)) {
-        // Use segments if they are valid
-        segmentsToRender = charSegments;
+// 3. Validate the result or use the default fallback character's segments
+if (isValidSegmentArray(charSegments)) {
+    // Use segments if they are valid
+    segmentsToRender = charSegments;
+} else if (char === "0" && isValidSegmentArray(currentMap["0"])) {
+    // Special case: ensure "0" is rendered correctly
+    segmentsToRender = currentMap["0"];
+} else {
+    // Fallback: Try to get segments for the DEFAULT_CHAR ('-')
+    const fallbackSegments = currentMap[DEFAULT_CHAR];
+    if (isValidSegmentArray(fallbackSegments)) {
+        segmentsToRender = fallbackSegments;
     } else {
-        // Fallback: Try to get segments for the DEFAULT_CHAR ('-')
-        const fallbackSegments = currentMap[DEFAULT_CHAR];
-        if (isValidSegmentArray(fallbackSegments)) {
-            // Use fallback segments if they are valid
-            segmentsToRender = fallbackSegments;
-            // Optional: Log warning if the original char was unexpected but fallback is used
-            // if (char !== DEFAULT_CHAR) { // Avoid warning if '-' was intended
-            //     console.warn(`react-7-segment-display: Character "${char}" not found in charMap. Displaying default "${DEFAULT_CHAR}".`);
-            // }
-        } else {
-            // Ultimate Fallback: If even DEFAULT_CHAR segments are invalid (problem with map!)
-            console.error(
-                `react-7-segment-display: Invalid segment data for char "${char}" AND default char "${DEFAULT_CHAR}". Check charMap.`,
-            );
-            segmentsToRender = []; // Assign empty array to prevent .map error
-        }
+        // Ultimate Fallback: If even DEFAULT_CHAR segments are invalid
+        console.error(
+            `react-7-segment-display: Invalid segment data for char "${char}" AND default char "${DEFAULT_CHAR}". Check charMap.`,
+        );
+        segmentsToRender = []; // Assign empty array to prevent .map error
     }
+}
     // --- End segment calculation ---
 
     // Now, `segmentsToRender` is guaranteed to be an array (possibly empty in case of error)
