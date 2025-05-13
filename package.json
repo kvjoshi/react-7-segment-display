@@ -7,7 +7,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "format": "prettier --write src",
-        "build": "npm run pretty && npm run build:esm && npm run build:cjs",
+        "build": " npm run build:esm && npm run build:cjs",
         "build:esm": "tsc",
         "build:cjs": "tsc --module CommonJS --outDir dist/cjs",
         "storybook": "storybook dev -p 6006",
@@ -15,7 +15,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/nachovigilante/react-7-segment-display.git"
+        "url": "git+https://github.com/kvjoshi/react-7-segment-display.git"
     },
     "keywords": [
         "react",
@@ -30,9 +30,9 @@
     "author": "Ignacio Vigilante",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/nachovigilante/react-7-segment-display/issues"
+        "url": "https://github.com/kvjoshi/react-7-segment-display/issues"
     },
-    "homepage": "https://github.com/nachovigilante/react-7-segment-display#readme",
+    "homepage": "https://github.com/kvjoshi/react-7-segment-display#readme",
     "devDependencies": {
         "@babel/core": "^7.24.6",
         "@babel/preset-react": "^7.24.6",
